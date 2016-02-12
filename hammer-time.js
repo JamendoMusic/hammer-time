@@ -40,6 +40,7 @@ var gl = ( function() {
 	}
 	catch ( e ) { return false; } } )();
 var timeTouch = gl && iOS;
+var touches = { };
 
 window.Hammer.time = {
 
@@ -66,14 +67,13 @@ window.Hammer.time = {
 				parentAction : false;
 	},
 	touchHandler: function( e ) {
-		var pos = e.target.getBoundingClientRect();
-		var scrolled = pos.top !== this.pos.top || pos.left !== this.pos.left;
+		var changedTouch = e.changedTouches[0];
+		var scrolled = changedTouch.clientY !== touches[changedTouch.identifier];
 		var hammerType = this.shouldHammer( e );
 
 		// Check both if we should trigger fast click and the time to avoid a double trigger with
 		// native fast click
-		if ( hammerType === "none" ||
-					( scrolled === false && hammerType === "manipulation" ) ) {
+		if ( !scrolled ) {
 			if ( e.type === "touchend" ) {
 				e.target.focus();
 
@@ -88,10 +88,11 @@ window.Hammer.time = {
 		}
 		this.scrolled = false;
 		delete e.target.lastStart;
+		delete touches[changedTouch.identifier];
 	},
 	touchStart: function( e ) {
-		this.pos = e.target.getBoundingClientRect();
-		if ( timeTouch && this.hasParent( e.target ) ) {
+		if ( timeTouch && this.hasParent( e.target ) && e.touches) {
+			touches[e.touches[0].identifier] = e.touches[0].clientY;
 			e.target.lastStart = Date.now();
 		}
 	},
@@ -153,6 +154,7 @@ window.Hammer.time = {
 	},
 	installEndEvents: function() {
 		document.addEventListener( "touchend", this.touchHandler.bind( this ), true );
+		document.addEventListener( "touchcancel", this.touchHandler.bind( this ), true );
 		document.addEventListener( "mouseup", this.touchHandler.bind( this ), true );
 	},
 	installObserver: function() {
