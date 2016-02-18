@@ -67,8 +67,11 @@ window.Hammer.time = {
 				parentAction : false;
 	},
 	touchHandler: function( e ) {
-		var changedTouch = e.changedTouches[0];
-		var scrolled = changedTouch.clientY !== touches[changedTouch.identifier];
+		var scrolled = false;
+		if (e.changedTouches) {
+			var changedTouch = e.changedTouches[0];
+			scrolled = changedTouch.clientY !== touches[changedTouch.identifier];
+		}
 		var hammerType = this.shouldHammer( e );
 
 		// Check both if we should trigger fast click and the time to avoid a double trigger with
@@ -88,7 +91,9 @@ window.Hammer.time = {
 		}
 		this.scrolled = false;
 		delete e.target.lastStart;
-		delete touches[changedTouch.identifier];
+		if (e.changedTouches) {
+			delete touches[changedTouch.identifier];
+		}
 	},
 	touchStart: function( e ) {
 		if ( timeTouch && this.hasParent( e.target ) && e.touches) {
