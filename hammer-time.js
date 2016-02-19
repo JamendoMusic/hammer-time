@@ -68,7 +68,7 @@ window.Hammer.time = {
 	},
 	touchHandler: function( e ) {
 		var scrolled = false;
-		if (e.changedTouches) {
+		if (e.changedTouches && touches[changedTouch.identifier]) {
 			var changedTouch = e.changedTouches[0];
 			scrolled = changedTouch.clientY !== touches[changedTouch.identifier];
 		}
@@ -77,7 +77,7 @@ window.Hammer.time = {
 		// Check both if we should trigger fast click and the time to avoid a double trigger with
 		// native fast click
 		if ( !scrolled ) {
-			if ( e.type === "touchend" ) {
+			if ( e.type === "touchend" || e.type === "mouseup") {
 				e.target.focus();
 
 				// Wait for next tic so events fire in proper order
