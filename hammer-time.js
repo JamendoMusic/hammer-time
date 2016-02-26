@@ -101,7 +101,7 @@ window.Hammer.time = {
 		}
 	},
 	touchStart: function( e ) {
-		if ( timeTouch && this.hasParent( e.target ) && e.touches) {
+		if ( iOS && this.hasParent( e.target ) && e.touches) {
 			touches[e.touches[0].identifier] = e.touches[0].clientY;
 			e.target.lastStart = Date.now();
 		}
