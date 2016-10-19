@@ -32,6 +32,7 @@ var touchMatchNone = /touch-action[:][\s]*(none)[^;'"]*/;
 var touchMatchManipulation = /touch-action[:][\s]*(manipulation)[^;'"]*/;
 var touchMatch = /touch-action/;
 var iOS = ( navigator.userAgent.match( /(iPad|iPhone|iPod)/g ) ? true : false );
+var firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 var gl = ( function() {
 	try {
 		var canvas = document.createElement( "canvas" );
@@ -101,7 +102,7 @@ window.Hammer.time = {
 		}
 	},
 	touchStart: function( e ) {
-		if ( iOS && this.hasParent( e.target ) && e.touches) {
+		if ( (iOS || firefox) && this.hasParent( e.target ) && e.touches) {
 			touches[e.touches[0].identifier] = e.touches[0].clientY;
 			e.target.lastStart = Date.now();
 		}
